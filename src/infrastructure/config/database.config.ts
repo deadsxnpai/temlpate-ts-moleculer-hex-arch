@@ -11,19 +11,3 @@ export const DatabaseConfigSchema = z.object({
 });
 
 export type DatabaseConfig = z.infer<typeof DatabaseConfigSchema>;
-
-// export function toPoolConfig(config: DatabaseConfig): PoolConfig {
-// 	return {
-// 		host: config.host,
-// 		port: config.port,
-// 		user: config.user,
-// 		password: config.password,
-// 		database: config.database,
-// 		max: config.max,
-// 		idleTimeoutMillis: config.idleTimeoutMillis,
-// 	};
-// }
-
-// export function toConnectionString(config: DatabaseConfig): string {
-// 	return `postgresql://${config.user}:${config.password}@${config.host}:${config.port}/${config.database}`;
-// }
