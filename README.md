@@ -11,8 +11,8 @@ A **Moleculer.js** microservices template with **Hexagonal Architecture** (Ports
 ```
 ├── src/
 │ ├── application/ # Application layer (use cases, business logic)
-│ │   ├── services/
-│ │   └── dtos/ # Data Transfer Objects
+│ │   ├── use-cases/
+│ │   └── DTO/ # Data Transfer Objects
 │ │
 │ ├── domain/ # Domain layer (core business models)
 │ │   ├── entities/ # Business entities
@@ -22,6 +22,8 @@ A **Moleculer.js** microservices template with **Hexagonal Architecture** (Ports
 │     ├── adapters/[in/out] # External adapters (DB, APIs, etc.)
 │     ├── config/ # Configuration files
 │     ├── di/ # dependency inversion container
+│     ├── moleculer/ # moleculer
+│     │   └── moleculer.config.ts # Moleculer broker config
 │     └── utils/ # Utilities/helpers
 ├── test/ # Tests
 │   ├── unit/ # Unit tests
@@ -29,7 +31,6 @@ A **Moleculer.js** microservices template with **Hexagonal Architecture** (Ports
 │   └── e2e/ # End-to-end tests
 │
 ├── .env # Environment variables
-├── moleculer.config.ts # Moleculer broker config
 ├── package.json
 └── README.md
 ```
