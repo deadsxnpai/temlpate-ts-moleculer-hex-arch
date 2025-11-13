@@ -1,0 +1,68 @@
+{
+	"name": "template-service",
+	"version": "1.0.0",
+	"description": "My Moleculer-based microservices project",
+	"scripts": {
+		"build": "rm -rf ./dist && tsc --project tsconfig.build.json && tsc-alias -p tsconfig.build.json",
+		"dev": "ts-node -r tsconfig-paths/register ./node_modules/moleculer/bin/moleculer-runner.js --config src/infrastructure/moleculer/moleculer.config.ts --hot --repl",
+		"start": "moleculer-runner --config dist/moleculer.config.js",
+		"test:types": "concurrently npm:prettier npm:lint npm:typecheck",
+		"typecheck": "tsc --noEmit && echo \"tsc: no typecheck errors\"",
+		"ci": "jest --watch",
+		"test": "jest --coverage",
+		"lint": "cross-env TIMING=1 eslint . --ext cjs,mjs,js,jsx,ts,tsx",
+		"lint:fix": "cross-env TIMING=1 eslint . --ext cjs,mjs,js,jsx,ts,tsx --fix",
+		"prettier": "prettier . --ignore-unknown --check",
+		"prettier:fix": "prettier . --ignore-unknown --write",
+		"dc:up": "colima start && docker-compose up",
+		"dc:logs": "docker-compose logs -f",
+		"dc:down": "docker-compose down",
+		"db:migrate": "npx prisma migrate dev",
+		"db:reset": "dotenv -e .env.dev -- npx prisma migrate reset",
+		"db:introspect": "npx prisma introspect"
+	},
+	"prisma": {
+		"seed": "tsx prisma/seed"
+	},
+	"keywords": [
+		"microservices",
+		"moleculer"
+	],
+	"author": "Daniil Klyuchnikov",
+	"devDependencies": {
+		"@jest/globals": "^29.3.1",
+		"@types/jest": "^29.2.3",
+		"@types/node": "^18.11.9",
+		"@types/ssh2": "^1.15.5",
+		"@typescript-eslint/eslint-plugin": "^5.44.0",
+		"@typescript-eslint/parser": "^5.44.0",
+		"concurrently": "^7.6.0",
+		"cross-env": "^7.0.3",
+		"dotenv-cli": "^8.0.0",
+		"eslint": "^8.28.0",
+		"eslint-config-airbnb-base": "^15.0.0",
+		"eslint-config-airbnb-typescript": "^17.0.0",
+		"eslint-config-prettier": "^8.5.0",
+		"eslint-plugin-import": "^2.26.0",
+		"eslint-plugin-jest": "^27.1.6",
+		"jest": "^29.3.1",
+		"moleculer-repl": "^0.7.3",
+		"prettier": "^2.8.0",
+		"ts-jest": "^29.0.3",
+		"ts-node": "^10.9.1",
+		"tsx": "^4.19.4",
+		"tsc-alias": "^1.8.16",
+		"typescript": "^5.1.0"
+	},
+	"dependencies": {
+		"@types/pg": "^8.11.10",
+		"dotenv": "^16.4.7",
+		"moleculer": "^0.14.27",
+		"moleculer-web": "^0.10.5",
+		"pg": "^8.13.1",
+		"zod": "^4.0.17"
+	},
+	"engines": {
+		"node": ">= 16.x.x"
+	}
+}
