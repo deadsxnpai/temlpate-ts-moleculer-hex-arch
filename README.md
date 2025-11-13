@@ -1,4 +1,4 @@
-[![Moleculer]()](https://moleculer.services)
+[![Moleculer](https://avatars.githubusercontent.com/u/25477106?v=4)](https://moleculer.services)
 
 # Moleculer Hexagonal Architecture Template
 
