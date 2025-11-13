@@ -1,8 +1,6 @@
 import { ITemplateController } from '@/domain/ports/input/api/template.controller';
-import Container from '@/infrastructure/di/container';
 import type { ServiceSchema } from 'moleculer';
-
-let container: Container;
+import container from '@/infrastructure/DI/container';
 
 export const TemplateService: ServiceSchema = {
 	name: 'template-service',
@@ -21,7 +19,6 @@ export const TemplateService: ServiceSchema = {
 	events: {},
 	async created() {
 		try {
-			container = new Container();
 			await container.init();
 			this.controller =
 				container.get<ITemplateController>('templateController');

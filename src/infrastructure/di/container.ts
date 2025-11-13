@@ -1,35 +1,61 @@
 import { Pool } from 'pg';
 import { config } from '../config';
-import { ITemplateController } from '../../domain/ports/input/api/template.controller';
-import { ITemplateRepository } from '../../domain/ports/output/template.repository';
-import { TemplateController } from '../adapters/input/api/graphql/template.controller';
-import { TemplateRepository } from '../adapters/output/postgresql.template.repository';
+import { TemplateRepository } from '@/infrastructure/adapters/output/postgresql.template.repository';
+import { TemplateController } from '@/infrastructure/adapters/input/api/graphql/template.controller';
+import { ITemplateRepository } from '@/domain/ports/output/template.repository';
+import { ITemplateController } from '@/domain/ports/input/api/template.controller';
+
+export const SERVICE_TYPES = {
+	DatabasePool: 'pool',
+	TemplateRepository: 'templateRepository',
+	TemplateController: 'templateController',
+} as const;
+
+type ServiceType = (typeof SERVICE_TYPES)[keyof typeof SERVICE_TYPES];
 
 class Container {
-	private services: Map<string, unknown>;
+	private services: Map<ServiceType, unknown>;
+	private initialized: boolean = false;
 
 	constructor() {
 		this.services = new Map();
 	}
 
 	async init(): Promise<void> {
-		const poolConfig = config.database;
-		const pgPool = new Pool(poolConfig);
-		this.register('pgPool', pgPool);
+		if (this.initialized) {
+			return;
+		}
 
-		const repo = new TemplateRepository(pgPool);
-		this.register<ITemplateRepository>('templateRepository', repo);
+		// Initialize database connection
+		const pgPool = new Pool(config.database);
+		this.register(SERVICE_TYPES.DatabasePool, pgPool);
 
-		const controller = new TemplateController(repo);
-		this.register<ITemplateController>('templateController', controller);
+		// Register repositories
+		const repository = new TemplateRepository(pgPool);
+		this.register<ITemplateRepository>(
+			SERVICE_TYPES.TemplateRepository,
+			repository
+		);
+
+		// Register controllers
+		const controller = new TemplateController(repository);
+		this.register<ITemplateController>(
+			SERVICE_TYPES.TemplateController,
+			controller
+		);
+
+		this.initialized = true;
 	}
 
-	register<T>(name: string, service: T): void {
+	register<T>(name: ServiceType, service: T): void {
+		if (this.services.has(name)) {
+			throw new Error(`Service ${name} is already registered`);
+		}
 		this.services.set(name, service);
 	}
 
-	get<T>(name: string): T {
-		const service = this.services.get(name);
+	get<T>(name: ServiceType): T {
+		const service = this.services.get(name) as T;
 		if (!service) {
 			throw new Error(`Service ${name} not found in container`);
 		}
@@ -37,9 +63,21 @@ class Container {
 	}
 
 	async shutdown(): Promise<void> {
-		const pgPool = this.get<Pool>('pgPool');
+		if (!this.initialized) {
+			return;
+		}
+
+		const pgPool = this.get<Pool>(SERVICE_TYPES.DatabasePool);
 		await pgPool.end();
+
+		this.services.clear();
+		this.initialized = false;
+	}
+
+	isInitialized(): boolean {
+		return this.initialized;
 	}
 }
 
-export default Container;
+const containerInstance = new Container();
+export default containerInstance;
