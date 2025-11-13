@@ -44,6 +44,8 @@ class Container {
 			controller
 		);
 
+		// Register use-cases usecase(controller)
+		//todo make usecase template
 		this.initialized = true;
 	}
 
